@@ -1,0 +1,22 @@
+{
+    "name": "backend",
+    "root": "apps/backend",
+    "sourceRoot": "apps/backend/src",
+    "targets": {
+      "build": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "gleam build",
+          "cwd": "apps/backend"
+        }
+      },
+      "serve": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "gleam run",
+          "cwd": "apps/backend"
+        }
+      }
+    }
+  }
+  
