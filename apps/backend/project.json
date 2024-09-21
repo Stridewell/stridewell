@@ -6,7 +6,7 @@
       "build": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "gleam build",
+          "command": "gleam clean && gleam build",
           "cwd": "apps/backend"
         }
       },
