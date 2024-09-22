@@ -7,3 +7,5 @@ dist
 .nx/workspace-data
 
 .env
+settings.py
+__pycache__
