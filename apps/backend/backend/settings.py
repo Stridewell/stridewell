@@ -11,23 +11,29 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from django.core.management.utils import get_random_secret_key
+import environ  
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+env = environ.Env(  
+    DEBUG=(bool, False)
+)
+
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+environ.Env.read_env(BASE_DIR / '.env') 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ram9fboe+gjua2@96y#1^roi21&cvk+)awrpgi4rd+yspp1h03'
+SECRET_KEY = env.str('SECRET_KEY', default=get_random_secret_key())
+DJANGO_SUPERUSER_PASSWORD=env.str('DJANGO_SUPERUSER_PASSWORD')
+DJANGO_SUPERUSER_USERNAME=env.str('DJANGO_SUPERUSER_USERNAME')
+DJANGO_SUPERUSER_EMAIL=env.str('DJANGO_SUPERUSER_EMAIL')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-
+ALLOWED_HOSTS = ["backend-twilight-night-4312.fly.dev", "localhost", '127.0.0.1']  
+CSRF_TRUSTED_ORIGINS = ['https://backend-twilight-night-4312.fly.dev']
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,11 +43,13 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -49,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CSRF_TRUSTED_ORIGINS = ['https://*.fly.dev'] 
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -75,16 +85,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        "NAME": "your_database_name",
-        "USER": "your_postgres_user",
-        "PASSWORD": "your_postgres_password",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
-    }
+    'default': env.db()
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -121,6 +123,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
